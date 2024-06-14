@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
-from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView, FormView
 
 from core.erp.forms import CategoryForm
 from core.erp.models import Category
@@ -10,7 +10,7 @@ from core.erp.models import Category
 
 class CategoryListView(ListView):
     model = Category
-    template_name = 'category/list.html'
+    template_name = 'category/cat_list.html'
 
     @method_decorator(csrf_exempt)
     def dispatch(self, request, *args, **kwargs):
@@ -42,7 +42,7 @@ class CategoryListView(ListView):
 class CategoryCreateView(CreateView):
     model = Category
     form_class = CategoryForm
-    template_name = 'category/create.html'
+    template_name = 'category/cat_create.html'
     success_url = reverse_lazy('erp:category_list')
 
     def post(self, request, *args, **kwargs):
@@ -70,7 +70,7 @@ class CategoryCreateView(CreateView):
 class CategoryUpdateView(UpdateView):
     model = Category
     form_class = CategoryForm
-    template_name = 'category/create.html'
+    template_name = 'category/cat_create.html'
     success_url = reverse_lazy('erp:category_list')
 
     def dispatch(self, request, *args, **kwargs):
@@ -101,7 +101,7 @@ class CategoryUpdateView(UpdateView):
 
 class CategoryDeleteView(DeleteView):
     model = Category
-    template_name = 'category/delete.html'
+    template_name = 'category/cat_delete.html'
     success_url = reverse_lazy('erp:category_list')
 
     def dispatch(self, request, *args, **kwargs):
@@ -122,3 +122,17 @@ class CategoryDeleteView(DeleteView):
         context['entity'] = 'Categorias'
         context['list_url'] = reverse_lazy('erp:category_list')
         return context
+
+class CategoryFormView(FormView):
+    form_class = CategoryForm
+    template_name = 'category/cat_create.html'
+    success_url=  reverse_lazy('erp:category_list')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'FormularioView Categoria'
+        context['entity'] = 'Categorias'
+        context['list_url'] = reverse_lazy('erp:category_list')
+        context['action'] = 'add'
+        return context
+
